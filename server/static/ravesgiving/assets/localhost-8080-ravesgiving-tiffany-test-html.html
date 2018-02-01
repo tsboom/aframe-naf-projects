@@ -1,0 +1,134 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script><script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script src="easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-text-geometry-component@0.5.1/dist/aframe-text-geometry-component.min.js"></script>
+
+
+    <script>
+        AFRAME.registerComponent('spawn-in-circle', {
+            schema: {
+                radius: {
+                    type: 'number',
+                    default: 1
+                }
+            },
+
+            init: function() {
+                var el = this.el;
+                var center = el.getAttribute('position');
+
+                var angleRad = this.getRandomAngleInRadians();
+                var circlePoint = this.randomPointOnCircle(this.data.radius, angleRad);
+                var worldPoint = {
+                    x: circlePoint.x + center.x,
+                    y: center.y,
+                    z: circlePoint.y + center.z
+                };
+                el.setAttribute('position', worldPoint);
+
+                var angleDeg = angleRad * 180 / Math.PI;
+                var angleToCenter = -1 * angleDeg + 90;
+                var rotationStr = '0 ' + angleToCenter + ' 0';
+                el.setAttribute('rotation', rotationStr);
+            },
+
+            getRandomAngleInRadians: function() {
+                return Math.random() * Math.PI * 2;
+            },
+
+            randomPointOnCircle: function(radius, angleRad) {
+                x = Math.cos(angleRad) * radius;
+                y = Math.sin(angleRad) * radius;
+                return {
+                    x: x,
+                    y: y
+                };
+            }
+        });
+    </script>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><script>WebFont.load({google: {families: ["Roboto", "Roboto Mono"]}});</script></head>
+
+<body class="a-body aframe-inspector-opened" cz-shortcut-listen="true">
+
+    <a-scene networked-scene="app:myApp;room:room1;debug:true" class="fullscreen" canvas="" inspector="url:https://unpkg.com/aframe-inspector@0.5.x/dist/aframe-inspector.min.js" keyboard-shortcuts="enterVR:true;exitVR:true;resetSensor:true" screenshot="width:4096;height:2048" vr-mode-ui="enabled:true" auto-enter-vr="display:GearVR;enabled:true">
+
+
+        <a-assets>
+            <script id="avatar-template" type="text/html">
+                &lt;a-entity class="avatar"&gt;
+                    &lt;a-sphere class="head" color="#5985ff" scale="0.45 0.5 0.4"&gt;&lt;/a-sphere&gt;
+                    &lt;a-entity class="face" position="0 0.05 0"&gt;
+                        &lt;a-sphere class="eye" color="#efefef" position="0.16 0.1 -0.35" scale="0.12 0.12 0.12"&gt;
+                            &lt;a-sphere class="pupil" color="#000" position="0 0 -1" scale="0.2 0.2 0.2"&gt;&lt;/a-sphere&gt;
+                        &lt;/a-sphere&gt;
+                        &lt;a-sphere class="eye" color="#efefef" position="-0.16 0.1 -0.35" scale="0.12 0.12 0.12"&gt;
+                            &lt;a-sphere class="pupil" color="#000" position="0 0 -1" scale="0.2 0.2 0.2"&gt;&lt;/a-sphere&gt;
+                        &lt;/a-sphere&gt;
+                    &lt;/a-entity&gt;
+                &lt;/a-entity&gt;
+            </script>
+            <!-- Add to bottom of the a-assets tag -->
+            <img id="bluegrid" src="assets/bluegrid.png" crossorigin="anonymous" />
+            <img id="grid" src="assets/checkerboard.png" crossorigin="anonymous" />
+            <!-- <img id="sky" src="https://img.gs/bbdkhfbzkk/2048x2048,stretch/http://i.imgur.com/WqlqEkq.jpg" crossorigin="anonymous" /> -->
+            <!-- <img id="sky" src="https://img.gs/bbdkhfbzkk/2048x2048,stretch/http://i.imgur.com/WqlqEkq.jpg" crossorigin="anonymous" /> -->
+            <!-- <img id="skyTexture" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg"> -->
+
+            <!-- font stuff -->
+            <a-asset-item id="optimerBoldFont" src="https://rawgit.com/mrdoob/three.js/dev/examples/fonts/optimer_bold.typeface.json"></a-asset-item>
+            <a-mixin id="boldFont" text="font: #optimerBoldFont"></a-mixin>
+
+
+            <!-- bear object -->
+            <a-asset-item id="bear_mtl" src="models/bear/materials.mtl"></a-asset-item>
+            <a-asset-item id="bear_obj" src="models/bear/model.obj"></a-asset-item>
+
+        </a-assets>
+
+        <a-box position="-1.052 2.922 -7.221" rotation="-0.77 58.239999999999995 35.55" color="#4CC3D9" scale="1 1 1" visible="true" material="color:#66ffcc;metalness:0.24" geometry="primitive:box"></a-box>
+        <a-sphere position="4.887 4.35 -12.861" radius="1.25" color="#EF2D5E" rotation="0 0 0" scale="1 1 1" visible="true" material="color:#66ff66;metalness:0.34" geometry="primitive:sphere;radius:1"></a-sphere><a-sphere position="-6.164 4.54 -5.468" radius="1.25" color="#EF2D5E" rotation="0 0 0" scale="1 1 1" visible="true" material="color:#cccccc;metalness:0.34" geometry="primitive:sphere;radius:1"></a-sphere><a-sphere position="7.359 1.543 3.418" radius="1.25" color="#EF2D5E" rotation="0 0 0" scale="1 1 1" visible="true" material="color:#ff0000;metalness:0.34" geometry="primitive:sphere;radius:0.74"></a-sphere><a-sphere position="-2.931 4.476 -17.827" radius="1.25" color="#EF2D5E" rotation="0 0 0" scale="1 1 1" visible="true" material="color:#ff0000;metalness:0.34" geometry="primitive:sphere;radius:0.74"></a-sphere>
+        <a-cylinder position="9.077 3.283 -6.018" radius="0.5" height="1.5" color="#FFC65D" rotation="7.48 8.42 -16.08" scale="1 1 1" visible="true" material="color:#ccff66;metalness:0.27" geometry="primitive:cylinder;radius:0.5;height:1.5"></a-cylinder>
+
+
+
+
+
+        <!-- bear -->
+        <a-entity id="bear" position="-2 1.6 0" rotation="0 -106.58927999984007 40.23216000047978" obj-model="obj:#bear_obj;mtl:#bear_mtl" scale="1 1 1" visible="true" material="">
+            <a-animation easing="linear" attribute="rotation" dur="10000" to="0 0 360" repeat="indefinite"></a-animation>
+        </a-entity>
+
+        <a-entity id="player" networked="template:#avatar-template;showLocalTemplate:false" camera="active:false" position="2.265837367428149 1.5 5.544457984942935" spawn-in-circle="radius:3" wasd-controls="" look-controls="" rotation="-8.021409131831525 -349.9679549357499 0" scale="1 1 1" visible="true"><a-entity template="src:#avatar-template" visible="" position="0 0 0" rotation="0 0 0" scale="1 1 1"><a-entity class="avatar" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true">
+                    <a-sphere class="head" color="#5985ff" scale="0.45 0.5 0.4" position="0 0 0" rotation="0 0 0" visible="true" material="color:#5985ff" geometry="primitive:sphere"></a-sphere>
+                    <a-entity class="face" position="0 0.05 0" rotation="0 0 0" scale="1 1 1" visible="true">
+                        <a-sphere class="eye" color="#efefef" position="0.16 0.1 -0.35" scale="0.12 0.12 0.12" rotation="0 0 0" visible="true" material="color:#efefef" geometry="primitive:sphere">
+                            <a-sphere class="pupil" color="#000" position="0 0 -1" scale="0.2 0.2 0.2" rotation="0 0 0" visible="true" material="color:#000" geometry="primitive:sphere"></a-sphere>
+                        </a-sphere>
+                        <a-sphere class="eye" color="#efefef" position="-0.16 0.1 -0.35" scale="0.12 0.12 0.12" rotation="0 0 0" visible="true" material="color:#efefef" geometry="primitive:sphere">
+                            <a-sphere class="pupil" color="#000" position="0 0 -1" scale="0.2 0.2 0.2" rotation="0 0 0" visible="true" material="color:#000" geometry="primitive:sphere"></a-sphere>
+                        </a-sphere>
+                    </a-entity>
+                </a-entity></a-entity></a-entity>
+        <!-- Add to bottom of a-scene tag -->
+        <a-entity id="plane" position="0 0 0" geometry="primitive:plane;width:1000;height:1000" rotation="-90 0 0" material="src:#bluegrid;repeat:1000 1000;transparent:true;metalness:0;roughness:0.4;sphericalEnvMap:#sky" scale="1 1 1" visible="true"></a-entity>
+
+        <a-entity id="plane" position="0 0 0" geometry="primitive:plane;width:44;height:44.23000000000001" rotation="-90 0 0" material="src:#grid;repeat:0.5 0.5;transparent:true;metalness:0;roughness:0.4;sphericalEnvMap:#sky" scale="1 1 1" visible="true"></a-entity>
+
+        <a-entity id="light1" light="color:#ccccff;intensity:1;type:ambient" visible="true" position="0 0 0" rotation="0 0 0" scale="1 1 1"></a-entity>
+        <a-entity id="light2" light="color:#ccc;intensity:1;type:directional" position="3 3 9" rotation="0 0 0" scale="1 1 1" visible="true"></a-entity>
+
+        <!-- <a-sky src="#sky" rotation="0 -90 0"></a-sky> -->
+        <a-sky id="sky" color="#000" position="0 0 0" rotation="0 0 0" scale="-1 1 1" visible="true" material="color:#000;shader:flat" geometry="primitive:sphere;radius:5000;segmentsWidth:64;segmentsHeight:20"></a-sky>
+
+
+        <!-- font stuff -->
+        <a-entity id="Ravesgiving" position="-2 1 -2" material="shader:standard;metalness:0.13;roughness:1.1;repeat:5 5;color:purple" text-geometry="value:RAVESGIVING;size:1;bevelEnabled:true;bevelSize:.01;bevelThickness:0.5" rotation="0 0 0" scale="1 1 1" visible="true">
+        </a-entity>
+
+    <canvas class="a-canvas a-grab-cursor" data-aframe-canvas="true" width="1314" height="856" style="width: 1643px; height: 1070px;"></canvas><a-entity camera="far:10000;fov:50;near:0.05;active:true" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"></a-entity></a-scene>
+
+
+
+<div class="a-inspector-loader">Loading Inspector<span class="dots"><span>.</span><span>.</span><span>.</span></span></div><a style="display: none;" href="blob:http://localhost:8080/9ecde427-9e2a-4610-a322-d609c308efca" download="localhost-8080-ravesgiving-tiffany-test-html"></a><a style="display: none;"></a></body></html>
